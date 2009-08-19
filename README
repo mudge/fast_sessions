@@ -63,7 +63,7 @@ for I/O bound servers.
 So, we decided to let the user choose what primary key to use in his deployment of our 
 plugin, so if you're going to use this module with MySQL 5.1.22+, then you'dlike to set 
 
-  CGI::Session::ActiveRecordStore::FastSessions.use_auto_increment = true
+  ActiveRecord::SessionStore::FastSessions.use_auto_increment = true
 
 because it will provide you with consecutive data inserts in InnoDB. Another cases when 
 you'd like to use it is when your MySQL server is I/O bound now and you do not want to 
@@ -72,15 +72,15 @@ add random I/O because of randomized primary key.
 
 ==Working With Old AR Sessions Table==
 
-If you do not like to loose old sessions created with default AR sessions plugin, you could set 
+If you do not like to lose old sessions created with default AR sessions plugin, you could set 
 
-  CGI::Session::ActiveRecordStore::FastSessions.fallback_to_old_table = true
+  ActiveRecord::SessionStore::FastSessions.fallback_to_old_table = true
 
 and then all session reads will fall back to old sessions table if some session_id was not 
 found in default fast sessions table. Old sessions table name could be set using 
 
-  CGI::Session::ActiveRecordStore::FastSessions.old_table_name 
-  
+  ActiveRecord::SessionStore::FastSessions.old_table_name
+
 variable.
 
 
@@ -88,19 +88,13 @@ variable.
 
 This plugin installation is pretty simple and described in a few steps below:
 
-1) Install this plugin sources in your `vendor/plugins` directory (it could be 
-./script/plugin install, or piston import command - it is up to you) from our 
-SVN reposipory. For example:
+1) Install this plugin in your `vendor/plugins` directory. For example:
 
-  ./script/plugin install http://rails-fast-sessions.googlecode.com/svn/trunk/
+  ./script/plugin install git://github.com/mudge/fast_sessions.git
 
-2) Enable `ActiveRecord` session store in your `config/environment.rb` file:
+2) Enable `ActiveRecord` session store in your `config/initializers/session_store.rb` file:
 
-  Rails::Initializer.run do |config|
-    ......
-    config.action_controller.session_store = :active_record_store
-    ......
-  end
+  ActionController::Base.session_store = :active_record_store
 
 3) Create migration for your new sessions table:
 
@@ -112,18 +106,22 @@ parameters of the plugin (if you want to).
 5) Run your migration:
 
   rake db:migrate
- 
+
 6) Start your application and try to perform some actions which would definitely 
 save some data to your session. Then check your `fast_sessions` table (if you did 
-not renamed it) for a records.
+not renamed it) for records.
 
 
 ==Downloading==
 
-Most recent version if this plugin could be found on the project's site: 
+The most recent version of this plugin can be found at: 
+
+  http://github.com/mudge/fast_sessions
+
+or get the original version from the project site at:
 
   http://code.google.com/p/rails-fast-sessions/
-  
+
 or in SVN repository:
 
   http://rails-fast-sessions.googlecode.com/svn/trunk/
@@ -134,3 +132,4 @@ or in SVN repository:
 This plugin has been created by Alexey Kovyrin. Development is sponsored 
 by [http://www.scribd.com Scribd.com].
 
+This Rails 2.3 compatible version was created by Paul Mucur, http://mucur.name

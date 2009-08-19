@@ -6,6 +6,3 @@ Description:
 Example:
     `./script/generate fast_session_migration CreateSessionTable`
 
-    With 4 existing migrations, this creates the CreateSessionTable migration
-    in db/migrate/005_add_session_table.rb
-
