@@ -139,8 +139,8 @@ module ActiveRecord
         ActiveRecord::Base.connection_pool.with_connection do |connection|
           connection.delete <<-end_sql, 'Destroy session'
             DELETE FROM #{@@table_name}
-             WHERE session_id_crc = CRC32(#{ActiveRecord::Base.connection.quote(session_id)})
-               AND session_id = #{ActiveRecord::Base.connection.quote(session_id)}
+             WHERE session_id_crc = CRC32(#{connection.quote(session_id)})
+               AND session_id = #{connection.quote(session_id)}
           end_sql
         end
       end
