@@ -8,7 +8,7 @@ require 'action_controller/test_process'
 
 # Show backtraces for deprecated behavior for quicker cleanup.
 ActiveSupport::Deprecation.debug = true
-ActionController::Base.logger = Logger.new("log/debug.log")
+ActionController::Base.logger = Logger.new("#{File.dirname(__FILE__)}/../log/debug.log")
 
 begin
   require "active_record" unless Object.const_defined?(:ActiveRecord)
