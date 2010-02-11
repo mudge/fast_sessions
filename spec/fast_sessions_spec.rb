@@ -13,6 +13,10 @@ describe "ActiveRecord::SessionStore::FastSessions Class" do
     marshaled_data.should_not be(nil)
     ActiveRecord::SessionStore::FastSessions.unmarshal(marshaled_data).should == data
   end
+  
+  it "should load data column size limit" do
+    ActiveRecord::SessionStore::FastSessions.data_size_limit.should == 65535
+  end
 end
 
 describe "FastSessions Class find_by_session_id() method" do
@@ -75,8 +79,8 @@ describe "FastSessions object save() method" do
   end
 
   it "should save data if should_save_session? returns true" do
-    @session.should_receive(:should_save_session?).and_return(false)
-    @connection.should_not_receive(:update)
+    @session.should_receive(:should_save_session?).and_return(true)
+    @connection.should_receive(:update)
     @session.save
   end
 
@@ -130,6 +134,7 @@ describe "FastSessions object save() method" do
     @session.data[:force_session_saving] = true
     @session.save
   end
+
 end
 
 describe "FastSessions object save() method in special cases" do
@@ -152,5 +157,11 @@ describe "FastSessions object save() method in special cases" do
     @connection.should_not_receive(:update)
     @session.data["flash"] = {}
     @session.save
+  end
+  
+  it "should raise ActionController::SessionOverflowError when data size exceeds data_size_limit" do
+    @data = { :test => "value" * ActiveRecord::SessionStore::FastSessions.data_size_limit }
+    @session = ActiveRecord::SessionStore::FastSessions.new(:session_id => 1222, :data => @data)
+    lambda {@session.save}.should raise_error(ActionController::SessionOverflowError)
   end
 end

@@ -96,6 +96,10 @@ module ActiveRecord
         end
       end
 
+      def self.data_size_limit
+        65535 # Size of Mysql TEXT column
+      end
+
       #-----------------------------------------------------------------------
       attr_reader :session_id
       attr_writer :data
@@ -118,6 +122,8 @@ module ActiveRecord
 
         # Marshal data before saving
         marshaled_data = self.class.marshal(data)
+
+        raise ActionController::SessionOverflowError if marshaled_data.length > self.class.data_size_limit
 
         # Save data to DB
         ActiveRecord::Base.connection_pool.with_connection do |connection|
